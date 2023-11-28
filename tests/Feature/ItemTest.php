@@ -22,22 +22,23 @@ class ItemTest extends TestCase
     public function test_erro_nome_vazio(): void
     {
         $response = $this->post(
-            '/api/v1/item/',
+            '/api/item/',
             $this->arrayCriacaoItem([
-                'item_nome' => null,
+                'item_nome' => '',
                 'item_unidade_medida' => 'un',
                 'item_qtd_minima' => 10,
                 'item_qtd_maxima' => 100,
                 'item_ativo' => 1,
             ]),
         );
-        $response->assertStatus(400);
+        $response->assertStatus(422);
+
     }
 
     public function test_unidade_medida_vazio(): void
     {
         $response = $this->post(
-            '/api/v1/item/',
+            '/api/item/',
             $this->arrayCriacaoItem([
                 'item_nome' => 'Alface',
                 'item_unidade_medida' => null,
@@ -46,13 +47,13 @@ class ItemTest extends TestCase
                 'item_ativo' => 1,
             ]),
         );
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     }
 
     public function test_qtd_minima_vazio(): void
     {
         $response = $this->post(
-            '/api/v1/item/',
+            '/api/item/',
             $this->arrayCriacaoItem([
                 'item_nome' => 'Alface',
                 'item_unidade_medida' => 'un',
@@ -61,13 +62,13 @@ class ItemTest extends TestCase
                 'item_ativo' => 1,
             ]),
         );
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     }
 
     public function test_qtd_maxima_vazio(): void
     {
         $response = $this->post(
-            '/api/v1/item/',
+            '/api/item/',
             $this->arrayCriacaoItem([
                 'item_nome' => 'Alface',
                 'item_unidade_medida' => 'un',
@@ -76,13 +77,13 @@ class ItemTest extends TestCase
                 'item_ativo' => 1,
             ]),
         );
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     }
 
     public function test_ativo_vazio(): void
     {
         $response = $this->post(
-            '/api/v1/item/',
+            '/api/item/',
             $this->arrayCriacaoItem([
                 'item_nome' => 'Alface',
                 'item_unidade_medida' => 'un',
@@ -91,13 +92,13 @@ class ItemTest extends TestCase
                 'item_ativo' => null,
             ]),
         );
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     }
 
     public function test_cadastrado_sucesso(): void
     {
         $response = $this->post(
-            '/api/v1/item/',
+            '/api/item/',
             $this->arrayCriacaoItem([
                 'item_nome' => 'Alface',
                 'item_unidade_medida' => 'un',
@@ -106,6 +107,6 @@ class ItemTest extends TestCase
                 'item_ativo' => 1,
             ]),
         );
-        $response->assertStatus(200);
+        $response->assertStatus(201);
     }
 }

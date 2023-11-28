@@ -11,7 +11,7 @@ class createItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class createItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'item_nome' => 'required|max:500',
+            'item_unidade_medida' => 'required|max:4',
+            'item_qtd_minima' => 'required',
+            'item_qtd_maxima' => 'required',
+            'item_ativo' => 'required',
         ];
     }
 }
