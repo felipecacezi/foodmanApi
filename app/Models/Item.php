@@ -62,16 +62,42 @@ class Item extends Model
         }
     }
 
-    public function listItem():array
+    public function listItem(array $dadosFiltro = []):array
     {
         try {
-            $arItens = Item::select(
+            $queryItens = Item::select(
                 'item_nome',
                 'item_unidade_medida',
                 'item_qtd_minima',
                 'item_qtd_maxima',
                 'item_ativo'
-            )->get()->toArray();
+            );
+
+            if (isset($dadosFiltro['item_nome'])) {
+                $queryItens->where('item_nome', $dadosFiltro['item_nome']);
+            }
+
+            if (isset($dadosFiltro['item_unidade_medida'])) {
+                $queryItens->where('item_unidade_medida', $dadosFiltro['item_unidade_medida']);
+            }
+
+            if (isset($dadosFiltro['item_qtd_minima'])) {
+                $queryItens->where('item_qtd_minima', $dadosFiltro['item_qtd_minima']);
+            }
+
+            if (isset($dadosFiltro['item_qtd_maxima'])) {
+                $queryItens->where('item_qtd_maxima', $dadosFiltro['item_qtd_maxima']);
+            }
+
+            if (isset($dadosFiltro['item_ativo'])) {
+                $queryItens->where('item_ativo', $dadosFiltro['item_ativo']);
+            }
+
+            if (isset($dadosFiltro['id'])) {
+                $queryItens->where('id', $dadosFiltro['id']);
+            }
+
+            $arItens = $queryItens->get()->toArray();
 
             return [
                 'status' => 200,

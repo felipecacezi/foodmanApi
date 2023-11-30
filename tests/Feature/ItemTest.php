@@ -109,11 +109,11 @@ class ItemTest extends TestCase
         $response = $this->post(
             '/api/item/',
             $this->arrayCriacaoItem([
-                'item_nome' => 'Alface',
-                'item_unidade_medida' => 'un',
-                'item_qtd_minima' => 10,
-                'item_qtd_maxima' => 100,
-                'item_ativo' => 1,
+                'item_nome' => 'Oregano',
+                'item_unidade_medida' => 'gr',
+                'item_qtd_minima' => 100,
+                'item_qtd_maxima' => 1000,
+                'item_ativo' => 0
             ]),
         );
         $response->assertStatus(201);
@@ -126,6 +126,25 @@ class ItemTest extends TestCase
         $response = $this->get('/api/item/');
         $response->assertStatus(200);
         $this->assertCount(1, $response['dados']);
+    }
+
+    public function test_listar_um_item():void
+    {
+        $this->test_cadastrado_sucesso();
+
+        $filtros = [
+            'item_nome' => 'Oregano',
+            'item_unidade_medida' => 'gr',
+            'item_qtd_minima' => 100,
+            'item_qtd_maxima' => 1000,
+            'item_ativo' => 0
+        ];
+
+        foreach ($filtros as $chaveFiltro => $filtro) {
+            $response = $this->get("/api/item?{$chaveFiltro}={$filtro}");
+            $response->assertStatus(200);
+            $this->assertCount(1, $response['dados']);
+        }
     }
 
     public function test_alteracao_erro_nome_vazio(): void

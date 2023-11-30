@@ -35,11 +35,16 @@ class ItemController extends Controller
         }
     }
 
-    public function list()
+    public function list(Request $request)
     {
         try {
             $item = new Item();
-            $arItens = $item->listAll();
+            if ($request->input()) {
+                $arItens = $item->listItem($request->input());
+            } else {
+                $arItens = $item->listAll();
+            }
+
             return response()
                 ->json(
                     $arItens,
