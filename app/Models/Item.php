@@ -36,4 +36,102 @@ class Item extends Model
             ];
         }
     }
+
+    public function listAll():array
+    {
+        try {
+            $arItens = Item::select(
+                'item_nome',
+                'item_unidade_medida',
+                'item_qtd_minima',
+                'item_qtd_maxima',
+                'item_ativo'
+            )->get()->toArray();
+
+            return [
+                'status' => 200,
+                'mensagem' => '',
+                'dados' => $arItens
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => 500,
+                'mensagem' => 'Ocorreu um erro ao buscar os itens, entre em contato com o suporte.',
+                'dados' => []
+            ];
+        }
+    }
+
+    public function listItem():array
+    {
+        try {
+            $arItens = Item::select(
+                'item_nome',
+                'item_unidade_medida',
+                'item_qtd_minima',
+                'item_qtd_maxima',
+                'item_ativo'
+            )->get()->toArray();
+
+            return [
+                'status' => 200,
+                'mensagem' => '',
+                'dados' => $arItens
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => 500,
+                'mensagem' => 'Ocorreu um erro ao buscar os itens, entre em contato com o suporte.',
+                'dados' => []
+            ];
+        }
+    }
+
+    public function updateItem(array $arItem):array
+    {
+        try {
+            $item = new Item();
+            $item->find($arItem['id']);
+            $item->item_nome = $arItem['item_nome'];
+            $item->item_unidade_medida = $arItem['item_unidade_medida'];
+            $item->item_qtd_minima = $arItem['item_qtd_minima'];
+            $item->item_qtd_maxima = $arItem['item_qtd_maxima'];
+            $item->item_ativo = $arItem['item_ativo'];
+            $item->save();
+
+            return [
+                'status' => 200,
+                'mensagem' => 'Item alterado com sucesso',
+                'dados' => []
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => 500,
+                'mensagem' => 'Ocorreu um erro ao alterar o item, entre em contato com o suporte.',
+                'dados' => []
+            ];
+        }
+    }
+
+    public function deleteItem(array $arItem):array
+    {
+        try {
+            $item = new Item();
+            $item->where('id', $arItem['id'])
+                ->update(
+                    ['item_ativo' => 0]
+                );
+            return [
+                'status' => 200,
+                'mensagem' => 'Item desativado com sucesso',
+                'dados' => []
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => 500,
+                'mensagem' =>'Ocorreu um erro ao inativar o item, entre em contato com o suporte.',
+                'dados' => []
+            ];
+        }
+    }
 }
