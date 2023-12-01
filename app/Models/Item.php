@@ -41,6 +41,7 @@ class Item extends Model
     {
         try {
             $arItens = Item::select(
+                'id',
                 'item_nome',
                 'item_unidade_medida',
                 'item_qtd_minima',
@@ -66,6 +67,7 @@ class Item extends Model
     {
         try {
             $queryItens = Item::select(
+                'id',
                 'item_nome',
                 'item_unidade_medida',
                 'item_qtd_minima',
