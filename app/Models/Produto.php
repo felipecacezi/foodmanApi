@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\ProdutoItem;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Produto extends Model
 {
@@ -15,6 +16,7 @@ class Produto extends Model
         try {
 
             $produto = new Produto();
+            $produtoItem = new ProdutoItem();
             $produto->produto_nome = $arProduto['produto_nome'];
             $produto->produto_descricao = $arProduto['produto_descricao'];
             $produto->produto_qtd_minima = $arProduto['produto_qtd_minima'];
@@ -23,6 +25,16 @@ class Produto extends Model
             $produto->produto_ativo = $arProduto['produto_ativo'];
             $produto->save();
             $arProduto['id'] = $produto->id;
+
+            if (
+                isset($arProduto['produto_itens'])
+                && !empty($arProduto['produto_itens'])
+            ) {
+                $produtoItem->vincularProdutoItens(
+                    $arProduto['produto_itens'],
+                    (int)$arProduto['id']
+                );
+            }
 
             return [
                 'status' => 201,

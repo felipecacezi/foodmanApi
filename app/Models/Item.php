@@ -25,7 +25,14 @@ class Item extends Model
             return [
                 'status' => 201,
                 'mensagem' => 'Item inserido com sucesso',
-                'dados' => []
+                'dados' => [
+                    'id' => $item->id,
+                    'item_nome' => $arItem['item_nome'],
+                    'item_unidade_medida' => $arItem['item_unidade_medida'],
+                    'item_qtd_minima' => $arItem['item_qtd_minima'],
+                    'item_qtd_maxima' => $arItem['item_qtd_maxima'],
+                    'item_ativo' => $arItem['item_ativo'],
+                ]
             ];
 
         } catch (\Throwable $th) {

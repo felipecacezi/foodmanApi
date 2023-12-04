@@ -8,6 +8,7 @@ use Tests\TestCase;
 class ItemTest extends TestCase
 {
     use RefreshDatabase;
+    const URL_BASE = '/api/item/';
 
     private function arrayCriacaoItem(array $dados = []) :array
     {
@@ -27,80 +28,84 @@ class ItemTest extends TestCase
         return $dadosCriacao;
     }
 
-    public function test_cadastro_erro_nome_vazio(): void
+    public function cadastrar_novo_item(array $dados = [])
     {
-
-        $response = $this->post(
-            '/api/item/',
-            $this->arrayCriacaoItem([
-                'item_nome' => '',
-                'item_unidade_medida' => 'un',
-                'item_qtd_minima' => 10,
-                'item_qtd_maxima' => 100,
-                'item_ativo' => 1,
-            ]),
+        return $this->post(
+            self::URL_BASE,
+            $this->arrayCriacaoItem($dados),
         );
-        $response->assertStatus(422);
-
     }
 
-    public function test_cadastro_erro_unidade_medida_vazio(): void
+    private function listar_itens(string $queryString = '')
     {
-        $response = $this->post(
-            '/api/item/',
-            $this->arrayCriacaoItem([
-                'item_nome' => 'Alface',
-                'item_unidade_medida' => null,
-                'item_qtd_minima' => 10,
-                'item_qtd_maxima' => 100,
-                'item_ativo' => 1,
-            ]),
+        return $this->get(
+            self::URL_BASE."/".$queryString,
         );
-        $response->assertStatus(422);
     }
 
-    public function test_cadastro_erro_qtd_minima_vazio(): void
+    private function atualizar_item(array $dados = [])
     {
-        $response = $this->post(
-            '/api/item/',
-            $this->arrayCriacaoItem([
-                'item_nome' => 'Alface',
-                'item_unidade_medida' => 'un',
-                'item_qtd_minima' => null,
-                'item_qtd_maxima' => 100,
-                'item_ativo' => 1,
-            ]),
+        return $this->put(
+            self::URL_BASE,
+            $this->arrayAlteracaoItem($dados),
         );
-        $response->assertStatus(422);
     }
 
-    public function test_cadastro_erro_qtd_maxima_vazio(): void
+    private function deletar_item(int $idItem = null)
     {
-        $response = $this->post(
-            '/api/item/',
-            $this->arrayCriacaoItem([
-                'item_nome' => 'Alface',
-                'item_unidade_medida' => 'un',
-                'item_qtd_minima' => 10,
-                'item_qtd_maxima' => null,
-                'item_ativo' => 1,
-            ]),
+        return $this->delete(
+            self::URL_BASE,
+            [
+                'id' => $idItem
+            ],
         );
-        $response->assertStatus(422);
     }
 
-    public function test_cadastro_erro_ativo_vazio(): void
+    public function test_cadastro_erro_campos_vazios(): void
     {
-        $response = $this->post(
-            '/api/item/',
-            $this->arrayCriacaoItem([
-                'item_nome' => 'Alface',
-                'item_unidade_medida' => 'un',
-                'item_qtd_minima' => 10,
-                'item_qtd_maxima' => 100,
-                'item_ativo' => null,
-            ]),
-        );
+        $response = $this->cadastrar_novo_item([
+            'item_nome' => null,
+            'item_unidade_medida' => 'un',
+            'item_qtd_minima' => 10,
+            'item_qtd_maxima' => 100,
+            'item_ativo' => 1,
+        ]);
+        $response->assertStatus(422);
+
+        $response = $this->cadastrar_novo_item([
+            'item_nome' => 'Alface',
+            'item_unidade_medida' => null,
+            'item_qtd_minima' => 10,
+            'item_qtd_maxima' => 100,
+            'item_ativo' => 1,
+        ]);
+        $response->assertStatus(422);
+
+        $response = $this->cadastrar_novo_item([
+            'item_nome' => 'Alface',
+            'item_unidade_medida' => 'un',
+            'item_qtd_minima' => null,
+            'item_qtd_maxima' => 100,
+            'item_ativo' => 1,
+        ]);
+        $response->assertStatus(422);
+
+        $response = $this->cadastrar_novo_item([
+            'item_nome' => 'Alface',
+            'item_unidade_medida' => 'un',
+            'item_qtd_minima' => 10,
+            'item_qtd_maxima' => null,
+            'item_ativo' => 1,
+        ]);
+        $response->assertStatus(422);
+
+        $response = $this->cadastrar_novo_item([
+            'item_nome' => 'Alface',
+            'item_unidade_medida' => 'un',
+            'item_qtd_minima' => 10,
+            'item_qtd_maxima' => 100,
+            'item_ativo' => null,
+        ]);
         $response->assertStatus(422);
     }
 
