@@ -41,6 +41,10 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api/mesa')
                 ->group(base_path('routes/api/mesas.php'));
 
+            Route::middleware('api')
+                ->prefix('api/pedido')
+                ->group(base_path('routes/api/pedidos.php'));
+
             // Route::middleware('web')
             //     ->group(base_path('routes/web.php'));
         });
