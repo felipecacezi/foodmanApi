@@ -12,7 +12,7 @@ class ProdutoTest extends TestCase
     const URL_BASE = '/api/produto/';
     const URL_BASE_ITEM = '/api/item/';
 
-    private function arrayCriacaoProduto(array $dados = [], array $dadosProdutoItem = []) :array
+    public function arrayCriacaoProduto(array $dados = [], array $dadosProdutoItem = []) :array
     {
 
         if (!empty($dadosProdutoItem)) {

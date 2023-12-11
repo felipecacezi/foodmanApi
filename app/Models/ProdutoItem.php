@@ -15,10 +15,10 @@ class ProdutoItem extends Model
         try {
             $produtoItem = new ProdutoItem();
 
-            foreach ($arProdutoItens as $chave => $produtoVinculo) {
-                $produtoItem->item_id = $produtoVinculo->item_id;
+            foreach ($arProdutoItens as $chave => $item) {
+                $produtoItem->item_id = $item->item_id;
                 $produtoItem->produto_id = $idProduto;
-                $produtoItem->qtd_item = $produtoVinculo->qtd_item;
+                $produtoItem->qtd_item = $item->qtd_item;
                 $produtoItem->save();
             }
 

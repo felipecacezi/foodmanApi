@@ -9,6 +9,43 @@ class PedidoTest extends TestCase
 {
     use RefreshDatabase;
     const URL_BASE = '/api/pedido/';
+    const URL_BASE_MESA = '/api/mesa/';
+    const URL_BASE_PRODUTO = '/api/produto/';
+    const URL_BASE_ITEM = '/api/item/';
+
+    private function arrayCriacaoMesa(array $dados = []) :array
+    {
+        return [
+            'mesa_identificacao' => $dados['mesa_identificacao'] ?? null,
+            'mesa_ativo' => $dados['mesa_ativo'] ?? null,
+        ];
+    }
+
+    private function arrayCriacaoItem(array $dados = []) :array
+    {
+        return [
+            'item_nome' => $dados['item_nome'] ?? null,
+            'item_unidade_medida' => $dados['item_unidade_medida'] ?? null,
+            'item_qtd_minima' => $dados['item_qtd_minima'] ?? null,
+            'item_qtd_maxima' => $dados['item_qtd_maxima'] ?? null,
+            'item_ativo' => $dados['item_ativo'] ?? null,
+        ];
+    }
+
+    public function arrayCriacaoProduto(array $dados = []) :array
+    {
+        $arProduto = [
+            'produto_nome' => $dados['produto_nome'] ?? null,
+            'produto_descricao' => $dados['produto_descricao'] ?? null,
+            'produto_qtd_minima' => $dados['produto_qtd_minima'] ?? null,
+            'produto_qtd_maxima' => $dados['produto_qtd_maxima'] ?? null,
+            'produto_valor' => $dados['produto_valor'] ?? null,
+            'produto_ativo' => $dados['produto_ativo'] ?? null,
+            'produto_itens' => $dados['produto_itens'] ?? [],
+        ];
+
+        return $arProduto;
+    }
 
     private function arrayCriacaoPedido(array $dados = []) :array
     {
@@ -19,6 +56,8 @@ class PedidoTest extends TestCase
             'pedido_status' => $dados['pedido_status'] ?? null,
             'funcionario_id' => $dados['funcionario_id'] ?? null,
             'pedido_ativo' => $dados['pedido_ativo'] ?? null,
+            'mesas' => $dados['mesas'] ?? [],
+            'produtos' => $dados['produtos'] ?? [],
         ];
     }
 
@@ -34,6 +73,30 @@ class PedidoTest extends TestCase
         return $this->post(
             self::URL_BASE,
             $this->arrayCriacaoPedido($dados),
+        );
+    }
+
+    private function cadastrar_novo_produto(array $dados = [])
+    {
+        return $this->post(
+            self::URL_BASE_PRODUTO,
+            $this->arrayCriacaoProduto($dados),
+        );
+    }
+
+    public function cadastrar_novo_item(array $dados = [])
+    {
+        return $this->post(
+            self::URL_BASE_ITEM,
+            $this->arrayCriacaoItem($dados),
+        );
+    }
+
+    public function cadastrar_nova_mesa(array $dados = [])
+    {
+        return $this->post(
+            self::URL_BASE_MESA,
+            $this->arrayCriacaoMesa($dados),
         );
     }
 
@@ -127,6 +190,45 @@ class PedidoTest extends TestCase
 
     public function test_cadastro_sucesso()
     {
+
+        $responseItem = $this->post(
+            self::URL_BASE_ITEM,
+            $this->arrayCriacaoItem([
+                'item_nome' => 'Oregano',
+                'item_unidade_medida' => 'gr',
+                'item_qtd_minima' => 100,
+                'item_qtd_maxima' => 1000,
+                'item_ativo' => 0
+            ]),
+        );
+        $responseItem->assertStatus(201);
+
+        $responseProduto = $this->cadastrar_novo_produto([
+            'produto_nome' => 'Coca-cola',
+            'produto_descricao' => 'Coca-cola lata 250ml',
+            'produto_qtd_minima' => 10,
+            'produto_qtd_maxima' => 100,
+            'produto_valor' => 5000,
+            'produto_ativo' => 1,
+            'produto_itens' => [
+                [
+                    'item_id' => $responseItem['dados']['id'],
+                    'qtd_item' => 1
+                ],
+                [
+                    'item_id' => $responseItem['dados']['id'],
+                    'qtd_item' => 2
+                ]
+            ]
+        ]);
+        $responseProduto->assertStatus(201);
+
+        $responseMesa = $this->cadastrar_nova_mesa([
+            'mesa_identificacao' => 'Mesa 01',
+            'mesa_ativo' => 1,
+        ]);
+        $responseMesa->assertStatus(201);
+
         $response = $this->cadastrar_novo_pedido([
             'pedido_nome_cliente' => 'Geraldo',
             'pedido_data' => '01/01/2023',
@@ -134,9 +236,20 @@ class PedidoTest extends TestCase
             'pedido_status' => 1,
             'funcionario_id' => 1,
             'pedido_ativo' => 1,
+            'mesas' => [
+                ['mesa_id' => $responseMesa['dados']['id']]
+            ],
+            'produtos' => [
+                ['produto_id' => $responseProduto['dados']['id']]
+            ]
         ]);
         $response->assertStatus(201);
+
+
+
     }
+
+
 
     public function test_listar_todos():void
     {
@@ -323,7 +436,7 @@ class PedidoTest extends TestCase
             'pedido_total_geral' => '10,00',
             'pedido_status' => 1,
             'funcionario_id' => 1,
-            'pedido_ativo' => 1,
+            'pedido_ativo' => 1
         ]);
         $responsePedido->assertStatus(201);
 

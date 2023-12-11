@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mesas;
 use App\Models\Pedidos;
+use App\Models\Produto;
 use Illuminate\Http\Request;
 use App\Http\Requests\createPedidosRequest;
 use App\Http\Requests\deletePedidosRequest;
@@ -12,12 +14,29 @@ class PedidosController extends Controller
 {
     public function create(createPedidosRequest $request)
     {
+        // dd($request->all());
         try {
             $request->validated();
             $pedidos = new Pedidos();
+            $mesas = new Mesas();
+            $produtos = new Produto();
             $arPedido = $pedidos->create(
                 $request->all()
             );
+
+
+
+            // if (
+            //     !empty($arPedido['dados']['id'])
+            //     && $request->mesas
+            // ) {
+
+            // }
+
+            // if () {
+
+            // }
+
             return response()
                 ->json(
                     $arPedido,
